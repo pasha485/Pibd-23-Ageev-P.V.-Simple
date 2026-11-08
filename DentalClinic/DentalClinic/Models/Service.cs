@@ -1,4 +1,6 @@
-﻿namespace DentalClinic.Models;
+﻿using DentalClinic.Enums;
+
+namespace DentalClinic.Models;
 
 /// <summary>
 /// Сущность "Услуга" (справочник процедур).

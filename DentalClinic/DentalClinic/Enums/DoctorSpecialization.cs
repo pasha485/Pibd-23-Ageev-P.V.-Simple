@@ -1,4 +1,4 @@
-﻿namespace DentalClinic.Models;
+﻿namespace DentalClinic.Enums;
 
 /// <summary>
 /// Обычное перечисление. Определяет специализацию врача-стоматолога.

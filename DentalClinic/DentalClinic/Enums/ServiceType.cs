@@ -1,4 +1,4 @@
-﻿namespace DentalClinic.Models;
+﻿namespace DentalClinic.Enums;
 
 /// <summary>
 /// Флаговое перечисление. Позволяет комбинировать типы услуг (например, пломба + чистка).

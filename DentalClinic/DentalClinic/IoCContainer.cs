@@ -1,22 +1,24 @@
-﻿using DentalClinic.Models;
+﻿using DentalClinic.Interfaces;
+using DentalClinic.Repositories;
 using Unity;
 
 namespace DentalClinic;
 
+/// <summary>
+/// Статический класс для настройки IoC-контейнера.
+/// </summary>
 public static class IoCContainer
 {
     public static IUnityContainer Configure()
     {
         var container = new UnityContainer();
 
-        // Регистрируем интерфейсы. 
-        // ВАЖНО: Здесь мы используем классы-заглушки (Stubs). 
-        // Если студия подчеркивает их красным, значит ты не добавил папку Stubs в проект.
-        container.RegisterType<IPatientRepository, Models.PatientRepositoryStub>();
-        container.RegisterType<IDoctorRepository, Models.DoctorRepositoryStub>();
-        container.RegisterType<IServiceRepository, Models.ServiceRepositoryStub>();
-        container.RegisterType<IAppointmentRepository, Models.AppointmentRepositoryStub>();
-        container.RegisterType<IAppointmentServiceRepository, Models.AppointmentServiceRepositoryStub>();
+        // Регистрация зависимостей (Интерфейсы -> Заглушки)
+        container.RegisterType<IPatientRepository, PatientRepositoryStub>();
+        container.RegisterType<IDoctorRepository, DoctorRepositoryStub>();
+        container.RegisterType<IServiceRepository, ServiceRepositoryStub>();
+        container.RegisterType<IAppointmentRepository, AppointmentRepositoryStub>();
+        container.RegisterType<IAppointmentServiceRepository, AppointmentServiceRepositoryStub>();
 
         return container;
     }
