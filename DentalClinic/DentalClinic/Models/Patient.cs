@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Linq; // Обязательно для метода .All()
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace DentalClinic.Models;
 
@@ -9,54 +10,43 @@ namespace DentalClinic.Models;
 public class Patient
 {
     /// <summary>Идентификатор (первичный ключ)</summary>
-    public int Id { get; private set; }
+    [Key]
+    public int Id { get; protected internal set; }
 
     /// <summary>ФИО пациента</summary>
-    public string FullName { get; private set; } = string.Empty;
+    [Required]
+    [MaxLength(100)]
+    public string FullName { get; protected internal set; } = string.Empty;
 
     /// <summary>Дата рождения</summary>
-    public DateTime BirthDate { get; private set; }
+    public DateTime BirthDate { get; protected internal set; }
 
     /// <summary>Контактный телефон</summary>
-    public string Phone { get; private set; } = string.Empty;
+    [Required]
+    [MaxLength(20)]
+    public string Phone { get; protected internal set; } = string.Empty;
 
     /// <summary>Номер медицинского полиса</summary>
-    public string PolicyNumber { get; private set; } = string.Empty;
+    [Required]
+    [MaxLength(20)]
+    public string PolicyNumber { get; protected internal set; } = string.Empty;
 
     /// <summary>
-    /// Приватный конструктор (запрещает создание объекта без валидации).
+    /// Конструктор для Entity Framework.
     /// </summary>
-    private Patient() { }
+    protected internal Patient() { }
 
     /// <summary>
-    /// Статический метод создания нового пациента (с проверками).
+    /// Статический метод создания нового пациента.
     /// </summary>
     public static Patient Create(string fullName, DateTime birthDate, string phone, string policyNumber)
     {
-        // 1. Проверка ФИО на пустоту
-        if (string.IsNullOrWhiteSpace(fullName))
-            throw new ArgumentException("ФИО не может быть пустым");
-
-        // 2. Проверка телефона на пустоту и на наличие только цифр
-        if (string.IsNullOrWhiteSpace(phone))
-            throw new ArgumentException("Телефон не может быть пустым");
-
-        if (!phone.All(char.IsDigit))
-            throw new ArgumentException("Телефон должен состоять только из цифр");
-
-        // 3. Проверка полиса на пустоту, наличие только цифр и длину (обычно полис не короче 5 цифр)
-        if (string.IsNullOrWhiteSpace(policyNumber))
-            throw new ArgumentException("Полис не может быть пустым");
-
-        if (!policyNumber.All(char.IsDigit))
-            throw new ArgumentException("Номер полиса должен состоять только из цифр");
-
-        if (policyNumber.Length < 5)
-            throw new ArgumentException("Номер полиса слишком короткий (минимум 5 цифр)");
-
-        // 4. Проверка даты рождения (нельзя родиться в будущем)
-        if (birthDate > DateTime.Now)
-            throw new ArgumentException("Дата рождения не может быть в будущем");
+        if (string.IsNullOrWhiteSpace(fullName)) throw new ArgumentException("ФИО не может быть пустым");
+        if (string.IsNullOrWhiteSpace(phone)) throw new ArgumentException("Телефон не может быть пустым");
+        if (!phone.All(char.IsDigit)) throw new ArgumentException("Телефон должен состоять только из цифр");
+        if (string.IsNullOrWhiteSpace(policyNumber)) throw new ArgumentException("Полис не может быть пустым");
+        if (!policyNumber.All(char.IsDigit) || policyNumber.Length < 5) throw new ArgumentException("Номер полиса введен некорректно");
+        if (birthDate > DateTime.Now) throw new ArgumentException("Дата рождения не может быть в будущем");
 
         return new Patient
         {
@@ -68,11 +58,10 @@ public class Patient
     }
 
     /// <summary>
-    /// Восстановление пациента из БД (с присвоением Id).
+    /// Восстановление пациента из БД.
     /// </summary>
     public static Patient Restore(int id, string fullName, DateTime birthDate, string phone, string policyNumber)
     {
-        // Метод Restore вызывает Create, поэтому все проверки сработают и здесь.
         var p = Create(fullName, birthDate, phone, policyNumber);
         p.Id = id;
         return p;
