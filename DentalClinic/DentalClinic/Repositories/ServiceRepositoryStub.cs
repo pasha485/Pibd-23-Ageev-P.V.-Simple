@@ -1,28 +1,66 @@
-﻿using DentalClinic.Models;
+﻿using DentalClinic.Data;
 using DentalClinic.Interfaces;
+using DentalClinic.Models;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DentalClinic.Repositories;
 
 /// <summary>
-/// Заглушка репозитория услуг.
+/// Репозиторий услуг, работающий с базой данных PostgreSQL.
 /// </summary>
-public class ServiceRepositoryStub : IServiceRepository
+public class ServiceRepositoryDb : IServiceRepository
 {
-    private readonly List<Service> _items = new();
-    private int _nextId = 1;
+    private readonly DataContext _context;
+    private readonly ILogger<ServiceRepositoryDb> _logger;
 
-    public IReadOnlyList<Service> GetAll() => _items;
-
-    public void Add(Service s)
+    public ServiceRepositoryDb(DataContext context, ILogger<ServiceRepositoryDb> logger)
     {
-        _items.Add(Service.Restore(_nextId++, s.Name, s.Type, s.Price));
+        _context = context;
+        _logger = logger;
     }
 
-    public void Update(Service s)
+    /// <summary>
+    /// Получить список всех услуг.
+    /// </summary>
+    public IReadOnlyList<Service> GetAll()
     {
-        var i = _items.FindIndex(x => x.Id == s.Id);
-        if (i >= 0) _items[i] = s;
+        return _context.Services.ToList();
     }
 
-    public void Delete(int id) => _items.RemoveAll(x => x.Id == id);
+    /// <summary>
+    /// Добавить новую услугу.
+    /// </summary>
+    public void Add(Service service)
+    {
+        _logger.LogInformation($"Добавление услуги: {service.Name}");
+        _context.Services.Add(service);
+        _context.SaveChanges();
+    }
+
+    /// <summary>
+    /// Обновить данные услуги.
+    /// </summary>
+    public void Update(Service service)
+    {
+        _logger.LogInformation($"Обновление услуги ID: {service.Id}");
+        _context.Services.Update(service);
+        _context.SaveChanges();
+    }
+
+    /// <summary>
+    /// Удалить услугу по ID.
+    /// </summary>
+    public void Delete(int id)
+    {
+        _logger.LogInformation($"Удаление услуги ID: {id}");
+        var service = _context.Services.Find(id);
+        if (service != null)
+        {
+            _context.Services.Remove(service);
+            _context.SaveChanges();
+        }
+    }
 }

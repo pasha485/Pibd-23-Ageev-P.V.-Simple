@@ -15,22 +15,14 @@ public class Appointment
 
     /// <summary>Ссылка на пациента (внешний ключ)</summary>
     [Required]
-    [ForeignKey(nameof(Patient))] // Атрибут связи
     public int PatientId { get; protected internal set; }
-
-    /// <summary>Навигационное свойство к пациенту</summary>
-    public virtual Patient Patient { get; protected internal set; }
 
     /// <summary>Ссылка на врача (внешний ключ)</summary>
     [Required]
-    [ForeignKey(nameof(Doctor))] // Атрибут связи
     public int DoctorId { get; protected internal set; }
 
-    /// <summary>Навигационное свойство к врачу</summary>
-    public virtual Doctor Doctor { get; protected internal set; }
-
     /// <summary>Дата и время приёма</summary>
-    [Column("AppointmentDate")] // Атрибут переименования колонки в БД
+    [Column("AppointmentDate")]
     public DateTime Date { get; protected internal set; }
 
     /// <summary>Поставленный диагноз</summary>
@@ -53,7 +45,8 @@ public class Appointment
         {
             PatientId = patientId,
             DoctorId = doctorId,
-            Date = date,
+            // Исправление проблемы с часовым поясом в PostgreSQL
+            Date = DateTime.SpecifyKind(date, DateTimeKind.Utc),
             Diagnosis = diagnosis,
             IsPaid = isPaid
         };

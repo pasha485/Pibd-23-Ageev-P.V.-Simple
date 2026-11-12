@@ -24,6 +24,7 @@ namespace DentalClinic.Forms
             _srvRepo = srvRepo;
             _patRepo = patRepo;
             LoadAppointments();
+            this.Shown += (s, e) => RefreshGrid();
         }
 
         /// <summary>
@@ -61,6 +62,7 @@ namespace DentalClinic.Forms
             }).ToList();
 
             gridServices.DataSource = null;
+            gridServices.AutoResizeColumns();
             gridServices.DataSource = list;
         }
 

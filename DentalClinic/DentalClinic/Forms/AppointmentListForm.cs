@@ -21,7 +21,7 @@ namespace DentalClinic.Forms
             _repo = repo;
             _patRepo = patRepo;
             _docRepo = docRepo;
-            RefreshGrid();
+            this.Shown += (s, e) => RefreshGrid();
         }
 
         private void RefreshGrid()
@@ -38,6 +38,8 @@ namespace DentalClinic.Forms
                 Оплачено = a.IsPaid ? "Да" : "Нет"
             }).ToList();
 
+            grid.DataSource = null;
+            grid.AutoResizeColumns();
             grid.DataSource = view;
         }
 

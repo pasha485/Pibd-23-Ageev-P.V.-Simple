@@ -1,28 +1,66 @@
-﻿using DentalClinic.Models;
+﻿using DentalClinic.Data;
 using DentalClinic.Interfaces;
+using DentalClinic.Models;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DentalClinic.Repositories;
 
 /// <summary>
-/// Заглушка репозитория врачей.
+/// Репозиторий врачей, работающий с базой данных PostgreSQL.
 /// </summary>
-public class DoctorRepositoryStub : IDoctorRepository
+public class DoctorRepositoryDb : IDoctorRepository
 {
-    private readonly List<Doctor> _items = new();
-    private int _nextId = 1;
+    private readonly DataContext _context;
+    private readonly ILogger<DoctorRepositoryDb> _logger;
 
-    public IReadOnlyList<Doctor> GetAll() => _items;
-
-    public void Add(Doctor d)
+    public DoctorRepositoryDb(DataContext context, ILogger<DoctorRepositoryDb> logger)
     {
-        _items.Add(Doctor.Restore(_nextId++, d.FullName, d.Specialization, d.Rate));
+        _context = context;
+        _logger = logger;
     }
 
-    public void Update(Doctor d)
+    /// <summary>
+    /// Получить список всех врачей.
+    /// </summary>
+    public IReadOnlyList<Doctor> GetAll()
     {
-        var i = _items.FindIndex(x => x.Id == d.Id);
-        if (i >= 0) _items[i] = d;
+        return _context.Doctors.ToList();
     }
 
-    public void Delete(int id) => _items.RemoveAll(x => x.Id == id);
+    /// <summary>
+    /// Добавить нового врача.
+    /// </summary>
+    public void Add(Doctor doctor)
+    {
+        _logger.LogInformation($"Добавление врача: {doctor.FullName}");
+        _context.Doctors.Add(doctor);
+        _context.SaveChanges();
+    }
+
+    /// <summary>
+    /// Обновить данные врача.
+    /// </summary>
+    public void Update(Doctor doctor)
+    {
+        _logger.LogInformation($"Обновление врача ID: {doctor.Id}");
+        _context.Doctors.Update(doctor);
+        _context.SaveChanges();
+    }
+
+    /// <summary>
+    /// Удалить врача по ID.
+    /// </summary>
+    public void Delete(int id)
+    {
+        _logger.LogInformation($"Удаление врача ID: {id}");
+        var doctor = _context.Doctors.Find(id);
+        if (doctor != null)
+        {
+            _context.Doctors.Remove(doctor);
+            _context.SaveChanges();
+        }
+    }
 }

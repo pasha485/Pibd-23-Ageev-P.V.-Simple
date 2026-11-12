@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DentalClinic.Models;
 
@@ -15,19 +14,11 @@ public class AppointmentService
 
     /// <summary>Ссылка на приём (внешний ключ)</summary>
     [Required]
-    [ForeignKey(nameof(Appointment))]
     public int AppointmentId { get; protected internal set; }
-
-    /// <summary>Навигационное свойство к приёму</summary>
-    public virtual Appointment Appointment { get; protected internal set; }
 
     /// <summary>Ссылка на услугу (внешний ключ)</summary>
     [Required]
-    [ForeignKey(nameof(Service))]
     public int ServiceId { get; protected internal set; }
-
-    /// <summary>Навигационное свойство к услуге</summary>
-    public virtual Service Service { get; protected internal set; }
 
     /// <summary>Количество оказанных услуг</summary>
     public int Quantity { get; protected internal set; }

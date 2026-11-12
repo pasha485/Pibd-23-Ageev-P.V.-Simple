@@ -17,7 +17,7 @@ namespace DentalClinic.Forms
         {
             InitializeComponent();
             _repo = repo;
-            RefreshGrid();
+            this.Shown += (s, e) => RefreshGrid();
         }
 
         /// <summary>
@@ -26,6 +26,7 @@ namespace DentalClinic.Forms
         private void RefreshGrid()
         {
             grid.DataSource = null;
+            grid.AutoResizeColumns();
             grid.DataSource = _repo.GetAll().ToList();
         }
 
