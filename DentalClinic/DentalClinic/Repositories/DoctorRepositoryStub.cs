@@ -46,8 +46,16 @@ public class DoctorRepositoryDb : IDoctorRepository
     public void Update(Doctor doctor)
     {
         _logger.LogInformation($"Обновление врача ID: {doctor.Id}");
-        _context.Doctors.Update(doctor);
-        _context.SaveChanges();
+
+        // 1. Ищем существующую запись в базе (или в кэше EF)
+        var existing = _context.Doctors.Find(doctor.Id);
+
+        if (existing != null)
+        {
+            // 2.копируем новые значения в существующий объект
+            _context.Entry(existing).CurrentValues.SetValues(doctor);
+            _context.SaveChanges();
+        }
     }
 
     /// <summary>

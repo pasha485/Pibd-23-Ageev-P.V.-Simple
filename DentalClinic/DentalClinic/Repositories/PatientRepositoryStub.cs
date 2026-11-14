@@ -47,8 +47,16 @@ public class PatientRepositoryDb : IPatientRepository
     public void Update(Patient patient)
     {
         _logger.LogInformation($"Обновление пациента ID: {patient.Id}");
-        _context.Patients.Update(patient);
-        _context.SaveChanges();
+
+        // Находим существующую запись
+        var existing = _context.Patients.Find(patient.Id);
+
+        if (existing != null)
+        {
+            // Копируем значения
+            _context.Entry(existing).CurrentValues.SetValues(patient);
+            _context.SaveChanges();
+        }
     }
 
     /// <summary>

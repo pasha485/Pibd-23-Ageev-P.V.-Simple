@@ -1,8 +1,9 @@
-﻿using System;
+﻿using DentalClinic.Interfaces;
+using DentalClinic.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Windows.Forms;
-using DentalClinic.Models;
-using DentalClinic.Interfaces;
 
 namespace DentalClinic.Forms
 {
