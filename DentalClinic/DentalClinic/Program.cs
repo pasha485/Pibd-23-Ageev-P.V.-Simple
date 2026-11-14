@@ -1,22 +1,28 @@
 using DentalClinic.Forms;
-using Unity; // <--- ОБЯЗАТЕЛЬНО добавить эту строку
+using Serilog;
+using Unity;
 
 namespace DentalClinic;
 
 internal static class Program
 {
-    /// <summary>
-    ///  The main entry point for the application.
-    /// </summary>
     [STAThread]
     static void Main()
     {
+        // 1. Настраиваем Serilog (пишем логи в папку Logs)
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+
         ApplicationConfiguration.Initialize();
 
-        // 1. Создаем контейнер
+        // 2. Настраиваем IoC-контейнер
         var container = IoCContainer.Configure();
 
-        // 2. Запускаем MainForm, передавая управление контейнеру
+        // 3. Запускаем программу
         Application.Run(container.Resolve<MainForm>());
+
+        // 4. При закрытии программы корректно сохращаем логи
+        Log.CloseAndFlush();
     }
 }

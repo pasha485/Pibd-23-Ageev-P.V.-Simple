@@ -1,32 +1,31 @@
-﻿using DentalClinic.Enums;
-
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using DentalClinic.Enums;
 namespace DentalClinic.Models;
 
 /// <summary>
-/// Сущность "Услуга" (справочник процедур).
+/// Сущность "Услуга".
 /// </summary>
 public class Service
 {
     /// <summary>Идентификатор</summary>
-    public int Id { get; private set; }
+    [Key]
+    public int Id { get; protected internal set; }
 
     /// <summary>Название услуги</summary>
-    public string Name { get; private set; } = string.Empty;
+    [Required]
+    [MaxLength(150)]
+    public string Name { get; protected internal set; } = string.Empty;
 
     /// <summary>Тип услуги (флаговое перечисление)</summary>
-    public ServiceType Type { get; private set; }
+    [Required]
+    public ServiceType Type { get; protected internal set; }
 
     /// <summary>Стоимость услуги</summary>
-    public decimal Price { get; private set; }
+    public decimal Price { get; protected internal set; }
 
-    /// <summary>
-    /// Приватный конструктор.
-    /// </summary>
-    private Service() { }
+    protected internal Service() { }
 
-    /// <summary>
-    /// Создание новой услуги.
-    /// </summary>
     public static Service Create(string name, ServiceType type, decimal price)
     {
         if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Название не может быть пустым");
@@ -35,9 +34,6 @@ public class Service
         return new Service { Name = name, Type = type, Price = price };
     }
 
-    /// <summary>
-    /// Восстановление услуги из БД.
-    /// </summary>
     public static Service Restore(int id, string name, ServiceType type, decimal price)
     {
         var s = Create(name, type, price);

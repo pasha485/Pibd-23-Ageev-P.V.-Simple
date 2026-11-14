@@ -1,8 +1,9 @@
-﻿using System;
+﻿using DentalClinic.Interfaces;
+using DentalClinic.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Windows.Forms;
-using DentalClinic.Models;
-using DentalClinic.Interfaces;
 
 namespace DentalClinic.Forms
 {
@@ -17,7 +18,7 @@ namespace DentalClinic.Forms
         {
             InitializeComponent();
             _repo = repo;
-            RefreshGrid();
+            this.Shown += (s, e) => RefreshGrid();
         }
 
         /// <summary>
@@ -26,6 +27,7 @@ namespace DentalClinic.Forms
         private void RefreshGrid()
         {
             grid.DataSource = null;
+            grid.AutoResizeColumns();
             grid.DataSource = _repo.GetAll().ToList();
         }
 

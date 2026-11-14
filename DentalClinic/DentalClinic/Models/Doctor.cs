@@ -1,4 +1,6 @@
 ﻿using DentalClinic.Enums;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace DentalClinic.Models;
 
@@ -8,25 +10,23 @@ namespace DentalClinic.Models;
 public class Doctor
 {
     /// <summary>Идентификатор</summary>
-    public int Id { get; private set; }
+    [Key]
+    public int Id { get; protected internal set; }
 
     /// <summary>ФИО врача</summary>
-    public string FullName { get; private set; } = string.Empty;
+    [Required]
+    [MaxLength(100)]
+    public string FullName { get; protected internal set; } = string.Empty;
 
     /// <summary>Специализация</summary>
-    public DoctorSpecialization Specialization { get; private set; }
+    [Required]
+    public DoctorSpecialization Specialization { get; protected internal set; }
 
     /// <summary>Ставка (оклад)</summary>
-    public decimal Rate { get; private set; }
+    public decimal Rate { get; protected internal set; }
 
-    /// <summary>
-    /// Приватный конструктор.
-    /// </summary>
-    private Doctor() { }
+    protected internal Doctor() { }
 
-    /// <summary>
-    /// Создание нового врача.
-    /// </summary>
     public static Doctor Create(string fullName, DoctorSpecialization specialization, decimal rate)
     {
         if (string.IsNullOrWhiteSpace(fullName)) throw new ArgumentException("ФИО не может быть пустым");
@@ -40,9 +40,6 @@ public class Doctor
         };
     }
 
-    /// <summary>
-    /// Восстановление врача из БД.
-    /// </summary>
     public static Doctor Restore(int id, string fullName, DoctorSpecialization specialization, decimal rate)
     {
         var d = Create(fullName, specialization, rate);

@@ -1,4 +1,8 @@
-﻿namespace DentalClinic.Models;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DentalClinic.Models;
 
 /// <summary>
 /// Сущность "Приём" (история лечения).
@@ -6,31 +10,31 @@
 public class Appointment
 {
     /// <summary>Идентификатор</summary>
-    public int Id { get; private set; }
+    [Key]
+    public int Id { get; protected internal set; }
 
     /// <summary>Ссылка на пациента (внешний ключ)</summary>
-    public int PatientId { get; private set; }
+    [Required]
+    public int PatientId { get; protected internal set; }
 
     /// <summary>Ссылка на врача (внешний ключ)</summary>
-    public int DoctorId { get; private set; }
+    [Required]
+    public int DoctorId { get; protected internal set; }
 
     /// <summary>Дата и время приёма</summary>
-    public DateTime Date { get; private set; }
+    [Column("AppointmentDate")]
+    public DateTime Date { get; protected internal set; }
 
     /// <summary>Поставленный диагноз</summary>
-    public string Diagnosis { get; private set; } = string.Empty;
+    [Required]
+    [MaxLength(250)]
+    public string Diagnosis { get; protected internal set; } = string.Empty;
 
     /// <summary>Статус оплаты (true - оплачено)</summary>
-    public bool IsPaid { get; private set; }
+    public bool IsPaid { get; protected internal set; }
 
-    /// <summary>
-    /// Приватный конструктор.
-    /// </summary>
-    private Appointment() { }
+    protected internal Appointment() { }
 
-    /// <summary>
-    /// Создание нового приёма.
-    /// </summary>
     public static Appointment Create(int patientId, int doctorId, DateTime date, string diagnosis, bool isPaid)
     {
         if (patientId <= 0) throw new ArgumentException("Не указан пациент");
@@ -41,15 +45,13 @@ public class Appointment
         {
             PatientId = patientId,
             DoctorId = doctorId,
-            Date = date,
+            // Исправление проблемы с часовым поясом в PostgreSQL
+            Date = DateTime.SpecifyKind(date, DateTimeKind.Utc),
             Diagnosis = diagnosis,
             IsPaid = isPaid
         };
     }
 
-    /// <summary>
-    /// Восстановление приёма из БД.
-    /// </summary>
     public static Appointment Restore(int id, int patientId, int doctorId, DateTime date, string diagnosis, bool isPaid)
     {
         var a = Create(patientId, doctorId, date, diagnosis, isPaid);

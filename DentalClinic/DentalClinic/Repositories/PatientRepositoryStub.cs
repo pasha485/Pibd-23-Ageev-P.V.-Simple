@@ -1,28 +1,75 @@
-﻿using DentalClinic.Models;
+﻿using DentalClinic.Data;
 using DentalClinic.Interfaces;
+using DentalClinic.Models;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DentalClinic.Repositories;
 
 /// <summary>
-/// Заглушка репозитория пациентов (хранит данные в памяти).
+/// Репозиторий пациентов, работающий с базой данных PostgreSQL.
 /// </summary>
-public class PatientRepositoryStub : IPatientRepository
+public class PatientRepositoryDb : IPatientRepository
 {
-    private readonly List<Patient> _items = new();
-    private int _nextId = 1;
+    private readonly DataContext _context;
+    private readonly ILogger<PatientRepositoryDb> _logger;
 
-    public IReadOnlyList<Patient> GetAll() => _items;
-
-    public void Add(Patient p)
+    public PatientRepositoryDb(DataContext context, ILogger<PatientRepositoryDb> logger)
     {
-        _items.Add(Patient.Restore(_nextId++, p.FullName, p.BirthDate, p.Phone, p.PolicyNumber));
+        _context = context;
+        _logger = logger;
     }
 
-    public void Update(Patient p)
+    /// <summary>
+    /// Получить список всех пациентов.
+    /// </summary>
+    public IReadOnlyList<Patient> GetAll()
     {
-        var i = _items.FindIndex(x => x.Id == p.Id);
-        if (i >= 0) _items[i] = p;
+        _logger.LogInformation("Запрос списка всех пациентов из БД");
+        return _context.Patients.ToList();
     }
 
-    public void Delete(int id) => _items.RemoveAll(x => x.Id == id);
+    /// <summary>
+    /// Добавить нового пациента.
+    /// </summary>
+    public void Add(Patient patient)
+    {
+        _logger.LogInformation($"Добавление пациента: {patient.FullName}");
+        _context.Patients.Add(patient);
+        _context.SaveChanges();
+    }
+
+    /// <summary>
+    /// Обновить данные пациента.
+    /// </summary>
+    public void Update(Patient patient)
+    {
+        _logger.LogInformation($"Обновление пациента ID: {patient.Id}");
+
+        // Находим существующую запись
+        var existing = _context.Patients.Find(patient.Id);
+
+        if (existing != null)
+        {
+            // Копируем значения
+            _context.Entry(existing).CurrentValues.SetValues(patient);
+            _context.SaveChanges();
+        }
+    }
+
+    /// <summary>
+    /// Удалить пациента по ID.
+    /// </summary>
+    public void Delete(int id)
+    {
+        _logger.LogInformation($"Удаление пациента ID: {id}");
+        var patient = _context.Patients.Find(id);
+        if (patient != null)
+        {
+            _context.Patients.Remove(patient);
+            _context.SaveChanges();
+        }
+    }
 }

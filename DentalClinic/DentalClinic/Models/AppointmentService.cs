@@ -1,34 +1,33 @@
-﻿namespace DentalClinic.Models;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace DentalClinic.Models;
 
 /// <summary>
 /// Класс-связка для отношения "многие-ко-многим".
-/// Связывает Приём и Услугу.
 /// </summary>
 public class AppointmentService
 {
     /// <summary>Идентификатор</summary>
-    public int Id { get; private set; }
+    [Key]
+    public int Id { get; protected internal set; }
 
     /// <summary>Ссылка на приём (внешний ключ)</summary>
-    public int AppointmentId { get; private set; }
+    [Required]
+    public int AppointmentId { get; protected internal set; }
 
     /// <summary>Ссылка на услугу (внешний ключ)</summary>
-    public int ServiceId { get; private set; }
+    [Required]
+    public int ServiceId { get; protected internal set; }
 
     /// <summary>Количество оказанных услуг</summary>
-    public int Quantity { get; private set; }
+    public int Quantity { get; protected internal set; }
 
     /// <summary>Стоимость использованных материалов</summary>
-    public decimal MaterialsCost { get; private set; }
+    public decimal MaterialsCost { get; protected internal set; }
 
-    /// <summary>
-    /// Приватный конструктор.
-    /// </summary>
-    private AppointmentService() { }
+    protected internal AppointmentService() { }
 
-    /// <summary>
-    /// Создание записи об оказанной услуге.
-    /// </summary>
     public static AppointmentService Create(int appointmentId, int serviceId, int quantity, decimal materialsCost)
     {
         if (appointmentId <= 0) throw new ArgumentException("Не указан приём");
@@ -45,9 +44,6 @@ public class AppointmentService
         };
     }
 
-    /// <summary>
-    /// Восстановление связи из БД.
-    /// </summary>
     public static AppointmentService Restore(int id, int appointmentId, int serviceId, int quantity, decimal materialsCost)
     {
         var item = Create(appointmentId, serviceId, quantity, materialsCost);
