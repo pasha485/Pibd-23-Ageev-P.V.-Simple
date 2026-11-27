@@ -21,6 +21,9 @@
             menuAppointments = new ToolStripMenuItem();
             menuAppointmentServices = new ToolStripMenuItem();
             menuReports = new ToolStripMenuItem();
+            menuDictionaryReport = new ToolStripMenuItem();
+            menuOperationsReport = new ToolStripMenuItem();
+            menuServicesChartReport = new ToolStripMenuItem();
             menuStrip.SuspendLayout();
             SuspendLayout();
 
@@ -85,8 +88,30 @@
             // 
             // menuReports (Отчеты)
             // 
+            menuReports.DropDownItems.AddRange(new ToolStripItem[] { menuDictionaryReport, menuOperationsReport, menuServicesChartReport });
             menuReports.Name = "menuReports";
             menuReports.Text = "Отчеты";
+
+            //
+            // menuDictionaryReport
+            //
+            menuDictionaryReport.Name = "menuDictionaryReport";
+            menuDictionaryReport.Text = "Справочники (Word)";
+            menuDictionaryReport.Click += menuDictionaryReport_Click;
+
+            //
+            // menuOperationsReport
+            //
+            menuOperationsReport.Name = "menuOperationsReport";
+            menuOperationsReport.Text = "Операции за период (Excel)";
+            menuOperationsReport.Click += menuOperationsReport_Click;
+
+            //
+            // menuServicesChartReport
+            //
+            menuServicesChartReport.Name = "menuServicesChartReport";
+            menuServicesChartReport.Text = "Диаграмма услуг за день (PDF)";
+            menuServicesChartReport.Click += menuServicesChartReport_Click;
 
             // 
             // MainForm
@@ -115,5 +140,8 @@
         private ToolStripMenuItem menuAppointments;
         private ToolStripMenuItem menuAppointmentServices;
         private ToolStripMenuItem menuReports;
+        private ToolStripMenuItem menuDictionaryReport;
+        private ToolStripMenuItem menuOperationsReport;
+        private ToolStripMenuItem menuServicesChartReport;
     }
 }
