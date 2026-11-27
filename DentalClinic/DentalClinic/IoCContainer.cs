@@ -1,5 +1,6 @@
 ﻿using DentalClinic.Data;
 using DentalClinic.Interfaces;
+using DentalClinic.Reports;
 using DentalClinic.Repositories;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -28,6 +29,11 @@ public static class IoCContainer
         container.RegisterType<IServiceRepository, ServiceRepositoryDb>();
         container.RegisterType<IAppointmentRepository, AppointmentRepositoryDb>();
         container.RegisterType<IAppointmentServiceRepository, AppointmentServiceRepositoryDb>();
+
+        // Регистрируем классы формирования отчётов
+        container.RegisterType<DictionaryReport>();
+        container.RegisterType<OperationsReport>();
+        container.RegisterType<ServicesChartReport>();
 
         return container;
     }

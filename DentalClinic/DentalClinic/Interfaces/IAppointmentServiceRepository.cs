@@ -8,6 +8,7 @@ namespace DentalClinic.Interfaces;
 public interface IAppointmentServiceRepository
 {
     IReadOnlyList<AppointmentService> GetByAppointmentId(int appointmentId);
+    IReadOnlyList<AppointmentService> GetByAppointmentIds(IReadOnlyCollection<int> appointmentIds);
     void Add(AppointmentService item);
     void Delete(int id);
 }
