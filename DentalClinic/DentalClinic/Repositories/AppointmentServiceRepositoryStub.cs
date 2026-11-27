@@ -34,6 +34,19 @@ public class AppointmentServiceRepositoryDb : IAppointmentServiceRepository
     }
 
     /// <summary>
+    /// Получить услуги для списка приёмов одним запросом.
+    /// </summary>
+    public IReadOnlyList<AppointmentService> GetByAppointmentIds(IReadOnlyCollection<int> appointmentIds)
+    {
+        if (appointmentIds.Count == 0) return Array.Empty<AppointmentService>();
+
+        return _context.AppointmentServices
+            .AsNoTracking()
+            .Where(x => appointmentIds.Contains(x.AppointmentId))
+            .ToList();
+    }
+
+    /// <summary>
     /// Добавить услугу к приёму (с использованием транзакции).
     /// </summary>
     public void Add(AppointmentService item)

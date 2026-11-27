@@ -1,7 +1,7 @@
-﻿using DentalClinic.Models;
-using System;
+﻿using System;
 using System.Windows.Forms;
 using DentalClinic.Interfaces;
+using DentalClinic.Reports;
 
 namespace DentalClinic.Forms
 {
@@ -16,12 +16,16 @@ namespace DentalClinic.Forms
         private readonly IServiceRepository _srvRepo;
         private readonly IAppointmentRepository _appRepo;
         private readonly IAppointmentServiceRepository _appSrvRepo;
+        private readonly DictionaryReport _dictionaryReport;
+        private readonly OperationsReport _operationsReport;
+        private readonly ServicesChartReport _servicesChartReport;
 
         /// <summary>
         /// Конструктор с внедрением зависимостей через IoC-контейнер.
         /// </summary>
         public MainForm(IPatientRepository patRepo, IDoctorRepository docRepo, IServiceRepository srvRepo,
-            IAppointmentRepository appRepo, IAppointmentServiceRepository appSrvRepo)
+            IAppointmentRepository appRepo, IAppointmentServiceRepository appSrvRepo,
+            DictionaryReport dictionaryReport, OperationsReport operationsReport, ServicesChartReport servicesChartReport)
         {
             InitializeComponent();
             _patRepo = patRepo;
@@ -29,6 +33,9 @@ namespace DentalClinic.Forms
             _srvRepo = srvRepo;
             _appRepo = appRepo;
             _appSrvRepo = appSrvRepo;
+            _dictionaryReport = dictionaryReport;
+            _operationsReport = operationsReport;
+            _servicesChartReport = servicesChartReport;
         }
 
         /// <summary>
@@ -76,6 +83,33 @@ namespace DentalClinic.Forms
         {
             using var form = new AppointmentServiceListForm(_appRepo, _appSrvRepo, _srvRepo, _patRepo);
             form.ShowDialog();
+        }
+
+        /// <summary>
+        /// Открывает форму выгрузки справочников в Word.
+        /// </summary>
+        private void menuDictionaryReport_Click(object sender, EventArgs e)
+        {
+            using var form = new DictionaryReportForm(_dictionaryReport);
+            form.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// Открывает форму выгрузки операций за период в Excel.
+        /// </summary>
+        private void menuOperationsReport_Click(object sender, EventArgs e)
+        {
+            using var form = new OperationsReportForm(_operationsReport);
+            form.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// Открывает форму выгрузки диаграммы услуг за день в PDF.
+        /// </summary>
+        private void menuServicesChartReport_Click(object sender, EventArgs e)
+        {
+            using var form = new ServicesChartReportForm(_servicesChartReport);
+            form.ShowDialog(this);
         }
     }
 }
